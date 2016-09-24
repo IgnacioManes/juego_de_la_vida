@@ -4,68 +4,14 @@
 #include <errno.h>
 //#include "funciones.h"
 
-void parsear_datos(const char* nombre_arch, unsigned int* nfil
+int parsear_datos(const char* nombre_arch, unsigned int* nfil
 				, unsigned int* ncol, unsigned int* niter){
 	FILE* archp = fopen(nombre_arch, "r");
 	unsigned int i;
 	char buffer[5];
 	char char_actual;
-	while(fgetc(archp) != ' '){
-		i = 0;
-		char_actual = fgetc(archp);
-		buffer[i] = char_actual;
-		i++;
-	}
-	while(i<6){
-		buffer[i]=' ';
-		i++;
-	}
-	*nfil = atoi(buffer);
-	while(fgetc(archp) != ' '){
-		i = 0;
-		char_actual = fgetc(archp);
-		buffer[i] = char_actual;
-		i++;
-	}
-	while(i<6){
-		buffer[i]=' ';
-		i++;
-	}
-	*ncol = atoi(buffer);
-	while(fgetc(archp) != ' '){
-		i = 0;
-		char_actual = fgetc(archp);
-		buffer[i] = char_actual;
-		i++;
-	}
-	while(i<6){
-		buffer[i]=' ';
-		i++;
-	}
-	*niter = atoi(buffer);
-	fclose(archp);
-}
-
-void inicializar_valores(unsigned int nfil, unsigned int ncol, char* matriz){
-	for(int i=0; i<nfil-1; i++){
-		for(int j=0; j<ncol-1; j++){
-			matriz[i*nfil+j]='-';
-		}
-	}
-}
-
-
-void parsear_posiciones (const char* nombre_arch, unsigned int nfil
-				, unsigned int ncol, char* matriz){
-	FILE* archp = fopen(nombre_arch, "r");
-	unsigned int i;
-	char buffer[5];
-	char char_actual;
-	int x;
-	int y;
-	inicializar_valores(nfil, ncol, matriz);
-	while (!feof(archp)){
-		while(fgetc(archp) != ','){
+	if(archp!=NULL){
+		while(fgetc(archp) != ' '){
 			i = 0;
 			char_actual = fgetc(archp);
 			buffer[i] = char_actual;
@@ -75,53 +21,141 @@ void parsear_posiciones (const char* nombre_arch, unsigned int nfil
 			buffer[i]=' ';
 			i++;
 		}
-		x=atoi(buffer);
-		if (x<nfil && x>0){
-			while(fgetc(archp) != '\n'){
-				i = 0;
-				char_actual = fgetc(archp);
+		*nfil = atoi(buffer);
+		while(fgetc(archp) != ' '){
+			i = 0;
+			char_actual = fgetc(archp);
+			buffer[i] = char_actual;
+			i++;
+		}
+		while(i<6){
+			buffer[i]=' ';
+			i++;
+		}
+		*ncol = atoi(buffer);
+		while(fgetc(archp) != ' '){
+			i = 0;
+			char_actual = fgetc(archp);
+			buffer[i] = char_actual;
+			i++;
+		}
+		while(i<6){
+			buffer[i]=' ';
+			i++;
+		}
+		*niter = atoi(buffer);
+		fclose(archp);
+		return 0;
+	}else{
+		return 1;
+	}
+}
+
+void inicializar_valores(unsigned int nfil, unsigned int ncol, char* matriz){
+	for(int i=0; i<nfil; i++){
+		for(int j=0; j<ncol; j++){
+			matriz[i*nfil+j]='-';
+		}
+	}
+}
+
+
+int parsear_posiciones (const char* nombre_arch, unsigned int nfil
+				, unsigned int ncol, char* matriz){
+	FILE* archp = fopen(nombre_arch, "r");
+	if(archp!=NULL){
+		unsigned int i;
+		char buffer[5];
+		char char_actual;
+		int x;
+		int y;
+		inicializar_valores(nfil, ncol, matriz);
+		char_actual = fgetc(archp);
+		while (!(feof(archp))){
+			i = 0;
+			while(char_actual != ' '){
 				buffer[i] = char_actual;
+				char_actual = fgetc(archp);
 				i++;
 			}
-			while(i<6){
+			while(i<5){
+				buffer[i]=' ';
+				i++;
+			}
+			x=atoi(buffer);
+			printf("%d ",x);
+			char_actual = fgetc(archp);
+			i = 0;
+			while(char_actual != '\n'){
+				buffer[i] = char_actual;
+				char_actual = fgetc(archp);
+				i++;
+			}
+			while(i<5){
 				buffer[i]=' ';
 				i++;
 			}
 			y=atoi(buffer);
-			if (y<ncol && y>0){			
+			printf("%d\n",y);
+			if (y<ncol && x<nfil){			
 				matriz[(y-1)*nfil+(x-1)]='X';
-			}
-			else{
+			}else{
 				fprintf(stderr, "Posicion invalida\n");
 			}
-		}else{
-			fprintf(stderr, "Posicion invalida\n");
+			char_actual = fgetc(archp);
 		}
+		fclose(archp);
+		printf("salio del while\n");
+		return 0;
+	}else{
+		return 1;
 	}
-	fclose(archp);
 }
 
+void mostrar_matriz(int nfil,int ncol,char* matriz){
+	for(int i=0;i<nfil;i++){
+		for(int j=0;j<ncol;j++){
+			printf("%c",matriz[i*nfil+j]);
+		}
+	printf("\n");
+	}
+}
 
-int main(int args, const char* argv[]){
-
-	if(args == 2){
+int main(int argc, char** argv){
+	if(argc == 3){
 		unsigned int nfilas;
 		unsigned int ncolumnas;
 		unsigned int niterac;
-		parsear_datos(argv[0], &nfilas, &ncolumnas, &niterac);
+		int estado = parsear_datos(argv[1], &nfilas, &ncolumnas, &niterac);
+		if(estado==0){
+			char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
+			estado = parsear_posiciones(argv[2], nfilas, ncolumnas, matriz);
+			if (estado == 0){
+				mostrar_matriz(nfilas, ncolumnas, matriz);
+				free(matriz);
+				return 0;
+			}else{
+			fprintf(stderr,"Error al abrir el archivo %s\n",argv[1]);
+				return 1;
+			}
+		}else{
+			fprintf(stderr,"Error al abrir el archivo %s\n",argv[2]);
+			return 1;
+		}
+	}else if(argc == 5){
+		unsigned int niterac = atoi(argv[1]);
+		unsigned int nfilas = atoi(argv[2]);
+		unsigned int ncolumnas = atoi(argv[3]);
 		char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
-		parsear_posiciones(argv[1], nfilas, ncolumnas, matriz);
-
-  	free(matriz);
-
-	}else if(args == 4){
-		unsigned int niterac = atoi(argv[0]);
-		unsigned int nfilas = atoi(argv[1]);
-		unsigned int ncolumnas = atoi(argv[2]);
-		char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
-		parsear_posiciones(argv[3], nfilas, ncolumnas, matriz);
-
-  	free(matriz);
+		int estado = parsear_posiciones(argv[4], nfilas, ncolumnas, matriz);
+		if(estado==0){
+			mostrar_matriz(nfilas, ncolumnas, matriz);
+  		free(matriz);
+  		return 0;
+  	}else{
+			fprintf(stderr,"Error al abrir el archivo %s\n",argv[4]);
+			return 1;
+		}
 	}else{
 		fprintf(stderr, "Error de argumentos\n");
 		return 1;
