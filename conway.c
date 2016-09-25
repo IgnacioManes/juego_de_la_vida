@@ -83,7 +83,6 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 				i++;
 			}
 			x=atoi(buffer);
-			printf("%d ",x);
 			char_actual = fgetc(archp);
 			i = 0;
 			while(char_actual != '\n'){
@@ -96,7 +95,6 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 				i++;
 			}
 			y=atoi(buffer);
-			printf("%d\n",y);
 			if (y<ncol && x<nfil){			
 				matriz[(y-1)*nfil+(x-1)]='X';
 			}else{
@@ -105,7 +103,6 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 			char_actual = fgetc(archp);
 		}
 		fclose(archp);
-		printf("salio del while\n");
 		return 0;
 	}else{
 		return 1;
@@ -117,7 +114,80 @@ void mostrar_matriz(int nfil,int ncol,char* matriz){
 		for(int j=0;j<ncol;j++){
 			printf("%c",matriz[i*nfil+j]);
 		}
+		printf("\n");
+	}
 	printf("\n");
+}
+
+void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
+	char matriz_aux[nfil][ncol];
+	int ix, iy, ixd, ixe, iys, iyi, vivos;
+	for(ix=0;ix<nfil;ix++){
+		for(iy=0;iy<ncol;iy++){
+			matriz_aux[ix][iy]=matriz[ix*nfil+iy];
+		}
+	}
+	for(int i=0; i<niterac; i++){
+		//recorrido total para comprobar si ha llegado al limite de la tabla
+		printf("Iteracion numero: %d \n",i+1);
+		for(ix=0; ix<nfil; ix++)
+		{
+		  for(iy=0; iy<ncol; iy++)
+	  	{//Vecinos inicio
+	    	vivos=0;
+	    	if(ix==nfil-1)
+		    	ixd=0;
+		    else
+		      ixd=ix+1;
+		    if(iy>=ncol-1)
+		      iyi=0;
+		    else
+		    	iyi=iy+1;
+		    if(ix<=0)
+		      ixe=nfil-1;
+		    else
+		      ixe=ix-1;
+		    if(iy<=0)
+		      iys=ncol-1;
+		    else
+		      iys=iy-1;
+		    //comprobación para saber si los vecinos están vivos o muertos
+		    if(matriz[nfil*ixd+iy]=='X')    vivos++;
+		    if(matriz[nfil*ixe+iy]=='X')    vivos++;
+		    if(matriz[nfil*ix+iys]=='X')    vivos++;  
+		    if(matriz[nfil*ix+iyi]=='X')    vivos++;
+		    if(matriz[nfil*ixd+iys]=='X')   vivos++;
+		    if(matriz[nfil*ixe+iys]=='X')   vivos++;
+		    if(matriz[ixd*nfil+iyi]=='X')   vivos++;
+		    if(matriz[ixe*nfil+iyi]=='X')   vivos++;
+		    //Vecinos fin
+		    //condicional para determinar si la casilla vive o muere
+			  if(matriz[ix*nfil+iy]=='X')
+		  		{
+		    	// esta vivo
+		      if(vivos<=1 || vivos>3)
+		      {
+		       	matriz_aux[ix][iy]='-';
+		      }else{
+		        matriz_aux[ix][iy]='X';
+		      }
+		    }else{
+		     	// esta muerto
+		     	if(vivos==3)
+		     	{
+		       	matriz_aux[ix][iy]='X';
+		     	}else{
+						matriz_aux[ix][iy]='-';
+		     	}
+		    }
+		  }// final del for iy
+		} // final del for ix
+	for(int ix=0;ix<nfil;ix++){
+		for(int iy=0;iy<ncol;iy++){
+			matriz[ix*nfil+iy]=matriz_aux[ix][iy];
+		}
+	}
+	mostrar_matriz(nfil, ncol, matriz);
 	}
 }
 
@@ -131,7 +201,9 @@ int main(int argc, char** argv){
 			char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
 			estado = parsear_posiciones(argv[2], nfilas, ncolumnas, matriz);
 			if (estado == 0){
+				printf("Estado inicial\n");
 				mostrar_matriz(nfilas, ncolumnas, matriz);
+				iterar_matriz(niterac, nfilas, ncolumnas, matriz);
 				free(matriz);
 				return 0;
 			}else{
@@ -149,7 +221,9 @@ int main(int argc, char** argv){
 		char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
 		int estado = parsear_posiciones(argv[4], nfilas, ncolumnas, matriz);
 		if(estado==0){
+			printf("Estado inicial\n");
 			mostrar_matriz(nfilas, ncolumnas, matriz);
+			iterar_matriz(niterac, nfilas, ncolumnas, matriz);
   		free(matriz);
   		return 0;
   	}else{
