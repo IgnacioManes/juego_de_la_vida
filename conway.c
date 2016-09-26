@@ -4,6 +4,9 @@
 #include <errno.h>
 //#include "funciones.h"
 
+#define PIXEL_WIDTH 40
+#define PIXEL_HEIGHT 40
+
 int parsear_datos(const char* nombre_arch, unsigned int* nfil
 				, unsigned int* ncol, unsigned int* niter){
 	FILE* archp = fopen(nombre_arch, "r");
@@ -52,13 +55,14 @@ int parsear_datos(const char* nombre_arch, unsigned int* nfil
 }
 
 void inicializar_valores(unsigned int nfil, unsigned int ncol, char* matriz){
-	for(int i=0; i<nfil; i++){
-		for(int j=0; j<ncol; j++){
+	int i = 0, j = 0;
+	for(; i<nfil; i++){
+		j = 0;
+		for(; j<ncol; j++){
 			matriz[i*nfil+j]='-';
 		}
 	}
 }
-
 
 int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 				, unsigned int ncol, char* matriz){
@@ -95,7 +99,7 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 				i++;
 			}
 			y=atoi(buffer);
-			if (y<ncol && x<nfil){			
+			if (y<ncol && x<nfil){
 				matriz[(y-1)*nfil+(x-1)]='X';
 			}else{
 				fprintf(stderr, "Posicion invalida\n");
@@ -109,9 +113,41 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 	}
 }
 
+int obtener_valor_numerico(unsigned int fil, unsigned int col, unsigned int nfil, char* matriz) {
+    unsigned char value = matriz[fil*nfil+col];
+    if (value == '-') {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+void escribir_pbm(int nfil,int ncol,char* matriz) {
+    int width = PIXEL_WIDTH;
+    int height = PIXEL_HEIGHT;
+    FILE *bit_map = fopen("matriz.pbm", "w");
+    fprintf(bit_map, "%s\n", "P1"); // Header
+    fprintf(bit_map, "%d %d\n", nfil*PIXEL_HEIGHT, ncol * PIXEL_WIDTH); // Width and Height
+
+    for (int i = 0; i < nfil; ++i) { // Writing the image
+        for (int pixY = 0; pixY < height; ++pixY) {
+            for (int j = 0; j < ncol; ++j) {
+                for (int pixX = 0; pixX < width; ++pixX) {
+                    unsigned char valor = obtener_valor_numerico(i, j, nfil, matriz);
+                    fprintf(bit_map, "%d ", valor);
+                }
+            }
+            putc('\n', bit_map);
+        }
+    }
+    fclose( bit_map );
+}
+
 void mostrar_matriz(int nfil,int ncol,char* matriz){
-	for(int i=0;i<nfil;i++){
-		for(int j=0;j<ncol;j++){
+	int i = 0, j= 0 ;
+	for(;i<nfil;i++){
+		j = 0;
+		for(;j<ncol;j++){
 			printf("%c",matriz[i*nfil+j]);
 		}
 		printf("\n");
@@ -189,6 +225,7 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 	}
 	mostrar_matriz(nfil, ncol, matriz);
 	}
+	escribir_pbm(nfil, ncol, matriz);
 }
 
 int main(int argc, char** argv){
@@ -203,6 +240,7 @@ int main(int argc, char** argv){
 			if (estado == 0){
 				printf("Estado inicial\n");
 				mostrar_matriz(nfilas, ncolumnas, matriz);
+				escribir_pbm(nfilas, ncolumnas, matriz);
 				iterar_matriz(niterac, nfilas, ncolumnas, matriz);
 				free(matriz);
 				return 0;
@@ -223,6 +261,7 @@ int main(int argc, char** argv){
 		if(estado==0){
 			printf("Estado inicial\n");
 			mostrar_matriz(nfilas, ncolumnas, matriz);
+			escribir_pbm(nfilas, ncolumnas, matriz);
 			iterar_matriz(niterac, nfilas, ncolumnas, matriz);
   		free(matriz);
   		return 0;
