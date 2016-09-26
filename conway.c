@@ -154,6 +154,37 @@ void mostrar_matriz(int nfil,int ncol,char* matriz){
 	}
 	printf("\n");
 }
+unsigned int vecinos(unsigned char *a, unsigned int i, unsigned int j,
+											unsigned int M, unsigned int N){
+	int ixd, ixe, iys, iyi, vivos;
+	vivos=0;
+	if(i==M-1)
+	 	ixd=0;
+	else
+	  ixd=i+1;
+	if(j>=N-1)
+	  iyi=0;
+	else
+	 	iyi=j+1;
+	if(i<=0)
+	  ixe=M-1;
+	else
+	  ixe=i-1;
+	if(j<=0)
+	  iys=N-1;
+	else
+	  iys=j-1;
+	//comprobación para saber si los vecinos están vivos o muertos
+	if(a[M*ixd+j]=='X')    vivos++;
+	if(a[M*ixe+j]=='X')    vivos++;
+	if(a[M*i+iys]=='X')    vivos++;  
+	if(a[M*i+iyi]=='X')    vivos++;
+	if(a[M*ixd+iys]=='X')   vivos++;
+	if(a[M*ixe+iys]=='X')   vivos++;
+	if(a[ixd*M+iyi]=='X')   vivos++;
+	if(a[ixe*M+iyi]=='X')   vivos++;
+	return vivos;
+}
 
 void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 	char matriz_aux[nfil][ncol];
@@ -170,33 +201,7 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 		{
 		  for(iy=0; iy<ncol; iy++)
 	  	{//Vecinos inicio
-	    	vivos=0;
-	    	if(ix==nfil-1)
-		    	ixd=0;
-		    else
-		      ixd=ix+1;
-		    if(iy>=ncol-1)
-		      iyi=0;
-		    else
-		    	iyi=iy+1;
-		    if(ix<=0)
-		      ixe=nfil-1;
-		    else
-		      ixe=ix-1;
-		    if(iy<=0)
-		      iys=ncol-1;
-		    else
-		      iys=iy-1;
-		    //comprobación para saber si los vecinos están vivos o muertos
-		    if(matriz[nfil*ixd+iy]=='X')    vivos++;
-		    if(matriz[nfil*ixe+iy]=='X')    vivos++;
-		    if(matriz[nfil*ix+iys]=='X')    vivos++;  
-		    if(matriz[nfil*ix+iyi]=='X')    vivos++;
-		    if(matriz[nfil*ixd+iys]=='X')   vivos++;
-		    if(matriz[nfil*ixe+iys]=='X')   vivos++;
-		    if(matriz[ixd*nfil+iyi]=='X')   vivos++;
-		    if(matriz[ixe*nfil+iyi]=='X')   vivos++;
-		    //Vecinos fin
+	  		vivos = vecinos(matriz, ix, iy, nfil, ncol);
 		    //condicional para determinar si la casilla vive o muere
 			  if(matriz[ix*nfil+iy]=='X')
 		  		{
