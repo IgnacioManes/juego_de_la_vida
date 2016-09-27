@@ -128,11 +128,11 @@ void escribir_pbm(int nfil,int ncol,char* matriz) {
     FILE *bit_map = fopen("matriz.pbm", "w");
     fprintf(bit_map, "%s\n", "P1"); // Header
     fprintf(bit_map, "%d %d\n", nfil*PIXEL_HEIGHT, ncol * PIXEL_WIDTH); // Width and Height
-
-    for (int i = 0; i < nfil; ++i) { // Writing the image
-        for (int pixY = 0; pixY < height; ++pixY) {
-            for (int j = 0; j < ncol; ++j) {
-                for (int pixX = 0; pixX < width; ++pixX) {
+    int i = 0; j = 0; pixY = 0; pixX = 0;
+    for (; i < nfil; ++i) { // Writing the image
+        for (; pixY < height; ++pixY) {
+            for (; j < ncol; ++j) {
+                for (; pixX < width; ++pixX) {
                     unsigned char valor = obtener_valor_numerico(i, j, nfil, matriz);
                     fprintf(bit_map, "%d ", valor);
                 }
@@ -194,7 +194,8 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 			matriz_aux[ix][iy]=matriz[ix*nfil+iy];
 		}
 	}
-	for(int i=0; i<niterac; i++){
+	int i =0;
+	for(; i<niterac; i++){
 		//recorrido total para comprobar si ha llegado al limite de la tabla
 		printf("Iteracion numero: %d \n",i+1);
 		for(ix=0; ix<nfil; ix++)
@@ -223,8 +224,8 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 		    }
 		  }// final del for iy
 		} // final del for ix
-	for(int ix=0;ix<nfil;ix++){
-		for(int iy=0;iy<ncol;iy++){
+	for(ix=0;ix<nfil;ix++){
+		for(iy=0;iy<ncol;iy++){
 			matriz[ix*nfil+iy]=matriz_aux[ix][iy];
 		}
 	}
