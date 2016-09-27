@@ -128,7 +128,7 @@ void escribir_pbm(int nfil,int ncol,char* matriz) {
     FILE *bit_map = fopen("matriz.pbm", "w");
     fprintf(bit_map, "%s\n", "P1"); // Header
     fprintf(bit_map, "%d %d\n", nfil*PIXEL_HEIGHT, ncol * PIXEL_WIDTH); // Width and Height
-    int i = 0; j = 0; pixY = 0; pixX = 0;
+    int i = 0, j = 0, pixY = 0, pixX = 0;
     for (; i < nfil; ++i) { // Writing the image
         for (; pixY < height; ++pixY) {
             for (; j < ncol; ++j) {
