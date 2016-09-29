@@ -7,7 +7,7 @@
 #define PIXEL_WIDTH 40
 #define PIXEL_HEIGHT 40
 
-int parsear_datos(const char* nombre_arch, unsigned int* nfil
+/*int parsear_datos(const char* nombre_arch, unsigned int* nfil
 				, unsigned int* ncol, unsigned int* niter){
 	FILE* archp = fopen(nombre_arch, "r");
 	unsigned int i;
@@ -52,7 +52,7 @@ int parsear_datos(const char* nombre_arch, unsigned int* nfil
 	}else{
 		return 1;
 	}
-}
+}*/
 
 void inicializar_valores(unsigned int nfil, unsigned int ncol, char* matriz){
 	int i = 0, j = 0;
@@ -171,29 +171,18 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 		printf("Iteracion numero: %d \n",i+1);
 		for(ix=0; ix<nfil; ix++)
 		{
-		  for(iy=0; iy<ncol; iy++)
-	  	{//Vecinos inicio
-	  		vivos = vecinos(matriz, ix, iy, nfil, ncol);
-		    //condicional para determinar si la casilla vive o muere
-			  if(matriz[ix*nfil+iy]=='X')
-		  		{
-		    	// esta vivo
-		      if(vivos<=1 || vivos>3)
-		      {
-		       	matriz_aux[ix][iy]='-';
-		      }else{
-		        matriz_aux[ix][iy]='X';
-		      }
-		    }else{
-		     	// esta muerto
-		     	if(vivos==3)
-		     	{
-		       	matriz_aux[ix][iy]='X';
-		     	}else{
-						matriz_aux[ix][iy]='-';
-		     	}
-		    }
-		  }// final del for iy
+			for(iy=0; iy<ncol; iy++)
+	  		{//Vecinos inicio
+	  			vivos = vecinos(matriz, ix, iy, nfil, ncol);
+		 	  	//condicional para determinar si la casilla vive o muere
+		 	  	if(vivos<2 || vivos>3)
+		   		{
+	    			matriz_aux[ix][iy]='-';
+	    		}else if(vivos==3 && matriz_aux[ix][iy]=='-'){
+		    	// esta muerto
+		       		matriz_aux[ix][iy]='X';
+		    	}
+		  	}// final del for iy
 		} // final del for ix
 	for(ix=0;ix<nfil;ix++){
 		for(iy=0;iy<ncol;iy++){
@@ -206,7 +195,7 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 }
 
 int main(int argc, char** argv){
-	if(argc == 3){
+	/*if(argc == 3){
 		unsigned int nfilas;
 		unsigned int ncolumnas;
 		unsigned int niterac;
@@ -228,8 +217,26 @@ int main(int argc, char** argv){
 		}else{
 			fprintf(stderr,"Error al abrir el archivo %s\n",argv[2]);
 			return 1;
+		}*/
+	if(argc == 2){
+		if(strcmp(argv[1],"-h")==0){
+			printf("Uso:\n");
+			printf("conway -h\n");
+			printf("conway -V\n");
+			printf("conway i M N inputfile [-o outputprefix]\n");
+			printf("Opciones:\n");
+			printf("-h, --help    Imprime este mensaje.\n");
+			printf("-V, --version Da la versión del programa.\n");
+			printf("-o Prefijo de los archivos de salida.\n");
+			return 0;
+		}else if(strcmp(argv[1],"-V")==0){
+			printf("version desarrollada en c y MIPS\n");
+			return 0;
+		}else{
+			fprintf(stderr, "Error de argumentos\n");
+			return 1;
 		}
-	}else if(argc == 5){
+	}else if(argc == 7){
 		unsigned int niterac = atoi(argv[1]);
 		unsigned int nfilas = atoi(argv[2]);
 		unsigned int ncolumnas = atoi(argv[3]);
