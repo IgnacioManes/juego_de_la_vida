@@ -122,10 +122,13 @@ int obtener_valor_numerico(unsigned int fil, unsigned int col, unsigned int nfil
     }
 }
 
-void escribir_pbm(int nfil,int ncol,char* matriz) {
+void escribir_pbm(int nfil,int ncol,char* matriz, const char* nombre_arch, int iterac) {
     int width = PIXEL_WIDTH;
     int height = PIXEL_HEIGHT;
-    FILE *bit_map = fopen("matriz.pbm", "w");
+    char buffer[30];
+    snprintf(buffer,sizeof(buffer),"%s_%d.pbm", nombre_arch,iterac);
+    printf("%s\n",buffer);
+    FILE *bit_map = fopen(buffer ,"w");
     fprintf(bit_map, "%s\n", "P1"); // Header
     fprintf(bit_map, "%d %d\n", nfil*PIXEL_HEIGHT, ncol * PIXEL_WIDTH); // Width and Height
     int i = 0, j = 0, pixY = 0, pixX = 0;
@@ -154,6 +157,7 @@ void mostrar_matriz(int nfil,int ncol,char* matriz){
 	}
 	printf("\n");
 }
+
 unsigned int vecinos(unsigned char *a, unsigned int i, unsigned int j,
 											unsigned int M, unsigned int N){
 	int ixd, ixe, iys, iyi, vivos;
@@ -186,7 +190,7 @@ unsigned int vecinos(unsigned char *a, unsigned int i, unsigned int j,
 	return vivos;
 }
 
-void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
+void iterar_matriz(int niterac, int nfil, int ncol, char* matriz, const char* nombre_arch){
 	char matriz_aux[nfil][ncol];
 	int ix, iy, ixd, ixe, iys, iyi, vivos;
 	for(ix=0;ix<nfil;ix++){
@@ -219,8 +223,8 @@ void iterar_matriz(int niterac, int nfil,int ncol,char* matriz){
 		}
 	}
 	mostrar_matriz(nfil, ncol, matriz);
+	escribir_pbm(nfil, ncol, matriz, nombre_arch, i+1);
 	}
-	escribir_pbm(nfil, ncol, matriz);
 }
 
 int main(int argc, char** argv){
@@ -275,8 +279,8 @@ int main(int argc, char** argv){
 		if(estado==0){
 			printf("Estado inicial\n");
 			mostrar_matriz(nfilas, ncolumnas, matriz);
-			escribir_pbm(nfilas, ncolumnas, matriz);
-			iterar_matriz(niterac, nfilas, ncolumnas, matriz);
+			escribir_pbm(nfilas, ncolumnas, matriz, argv[6], 0);
+			iterar_matriz(niterac, nfilas, ncolumnas, matriz, argv[6]);
   		free(matriz);
   		return 0;
   	}else{
