@@ -4,8 +4,8 @@
 #include <errno.h>
 //#include "funciones.h"
 
-#define PIXEL_WIDTH 40
-#define PIXEL_HEIGHT 40
+#define PIXEL_WIDTH 50
+#define PIXEL_HEIGHT 50
 
 /*int parsear_datos(const char* nombre_arch, unsigned int* nfil
 				, unsigned int* ncol, unsigned int* niter){
@@ -59,7 +59,7 @@ void inicializar_valores(unsigned int nfil, unsigned int ncol, char* matriz){
 	for(; i<nfil; i++){
 		j = 0;
 		for(; j<ncol; j++){
-			matriz[i*nfil+j]='-';
+			matriz[i*ncol+j]='-';
 		}
 	}
 }
@@ -100,7 +100,7 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 			}
 			y=atoi(buffer);
 			if (y<ncol && x<nfil){
-				matriz[(y-1)*nfil+(x-1)]='X';
+				matriz[(y-1)*ncol+(x-1)]='X';
 			}else{
 				fprintf(stderr, "Posicion invalida\n");
 			}
@@ -113,8 +113,8 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 	}
 }
 
-int obtener_valor_numerico(unsigned int fil, unsigned int col, unsigned int nfil, char* matriz) {
-    unsigned char value = matriz[fil*nfil+col];
+int obtener_valor_numerico(unsigned int fil, unsigned int col, unsigned int ncol, char* matriz) {
+    unsigned char value = matriz[fil*ncol+col];
     if (value == '-') {
         return 0;
     } else {
@@ -125,18 +125,23 @@ int obtener_valor_numerico(unsigned int fil, unsigned int col, unsigned int nfil
 void escribir_pbm(int nfil,int ncol,char* matriz, const char* nombre_arch, int iterac) {
     int width = PIXEL_WIDTH;
     int height = PIXEL_HEIGHT;
+
     char buffer[30];
     snprintf(buffer,sizeof(buffer),"%s_%d.pbm", nombre_arch,iterac);
     printf("%s\n",buffer);
+
     FILE *bit_map = fopen(buffer ,"w");
     fprintf(bit_map, "%s\n", "P1"); // Header
     fprintf(bit_map, "%d %d\n", nfil*PIXEL_HEIGHT, ncol * PIXEL_WIDTH); // Width and Height
     int i = 0, j = 0, pixY = 0, pixX = 0;
-    for (; i < nfil; ++i) { // Writing the image
-        for (; pixY < height; ++pixY) {
-            for (; j < ncol; ++j) {
-                for (; pixX < width; ++pixX) {
-                    unsigned char valor = obtener_valor_numerico(i, j, nfil, matriz);
+    char str[15];
+    sprintf(str, "%d", nfil);
+    printf("%s\n", str);
+    for (i = 0; i < nfil; ++i) { // Writing the image
+        for (pixY = 0; pixY < height; ++pixY) {
+            for (j = 0; j < ncol; ++j) {
+                for (pixX = 0; pixX < width; ++pixX) {
+                    unsigned char valor = obtener_valor_numerico(i, j, ncol, matriz);
                     fprintf(bit_map, "%d ", valor);
                 }
             }
@@ -151,7 +156,7 @@ void mostrar_matriz(int nfil,int ncol,char* matriz){
 	for(;i<nfil;i++){
 		j = 0;
 		for(;j<ncol;j++){
-			printf("%c",matriz[i*nfil+j]);
+			printf("%c",matriz[i*ncol+j]);
 		}
 		printf("\n");
 	}
@@ -181,7 +186,7 @@ unsigned int vecinos(unsigned char *a, unsigned int i, unsigned int j,
 	//comprobación para saber si los vecinos están vivos o muertos
 	if(a[M*ixd+j]=='X')    vivos++;
 	if(a[M*ixe+j]=='X')    vivos++;
-	if(a[M*i+iys]=='X')    vivos++;  
+	if(a[M*i+iys]=='X')    vivos++;
 	if(a[M*i+iyi]=='X')    vivos++;
 	if(a[M*ixd+iys]=='X')   vivos++;
 	if(a[M*ixe+iys]=='X')   vivos++;
@@ -195,7 +200,7 @@ void iterar_matriz(int niterac, int nfil, int ncol, char* matriz, const char* no
 	int ix, iy, ixd, ixe, iys, iyi, vivos;
 	for(ix=0;ix<nfil;ix++){
 		for(iy=0;iy<ncol;iy++){
-			matriz_aux[ix][iy]=matriz[ix*nfil+iy];
+			matriz_aux[ix][iy]=matriz[ix*ncol+iy];
 		}
 	}
 	int i =0;
@@ -219,7 +224,7 @@ void iterar_matriz(int niterac, int nfil, int ncol, char* matriz, const char* no
 		} // final del for ix
 	for(ix=0;ix<nfil;ix++){
 		for(iy=0;iy<ncol;iy++){
-			matriz[ix*nfil+iy]=matriz_aux[ix][iy];
+			matriz[ix*ncol+iy]=matriz_aux[ix][iy];
 		}
 	}
 	mostrar_matriz(nfil, ncol, matriz);
