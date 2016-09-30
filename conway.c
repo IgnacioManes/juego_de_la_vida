@@ -69,6 +69,7 @@ int parsear_posiciones (const char* nombre_arch, unsigned int nfil
 				, unsigned int ncol, unsigned char* matriz){
 	FILE* archp = fopen(nombre_arch, "r");
 	if(archp!=NULL){
+		printf("Leyendo estado inicial...\n");
 		unsigned int i;
 		char buffer[5];
 		char char_actual;
@@ -169,15 +170,15 @@ unsigned int vecinos(unsigned char *a, unsigned int i, unsigned int j,
 	 	ixd=0;
 	else
 	  ixd=i+1;
-	if(j>=N-1)
+	if(j==N-1)
 	  iyi=0;
 	else
 	 	iyi=j+1;
-	if(i<=0)
+	if(i==0)
 	  ixe=M-1;
 	else
 	  ixe=i-1;
-	if(j<=0)
+	if(j==0)
 	  iys=N-1;
 	else
 	  iys=j-1;
@@ -204,7 +205,7 @@ void iterar_matriz(int niterac, int nfil, int ncol, unsigned char* matriz, const
 	int i =0;
 	for(; i<niterac; i++){
 		//recorrido total para comprobar si ha llegado al limite de la tabla
-		printf("Iteracion numero: %d \n",i+1);
+		//printf("Iteracion numero: %d \n",i+1);
 		for(ix=0; ix<nfil; ix++)
 		{
 			for(iy=0; iy<ncol; iy++)
@@ -225,7 +226,7 @@ void iterar_matriz(int niterac, int nfil, int ncol, unsigned char* matriz, const
 			matriz[ix*ncol+iy]=matriz_aux[ix][iy];
 		}
 	}
-	mostrar_matriz(nfil, ncol, matriz);
+	//mostrar_matriz(nfil, ncol, matriz);
 	escribir_pbm(nfil, ncol, matriz, nombre_arch, i+1);
 	}
 }
@@ -281,13 +282,13 @@ int main(int argc, char** argv){
 		unsigned char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
 		int estado = parsear_posiciones(argv[4], nfilas, ncolumnas, matriz);
 		if(estado==0){
-			printf("Estado inicial\n");
-			mostrar_matriz(nfilas, ncolumnas, matriz);
+			//printf("Estado inicial\n");
+			//mostrar_matriz(nfilas, ncolumnas, matriz);
 			escribir_pbm(nfilas, ncolumnas, matriz, argv[4], 0);
 			iterar_matriz(niterac, nfilas, ncolumnas, matriz, argv[4]);
   			free(matriz);
-  			return 0;
   			printf("Listo\n");
+  			return 0;
   		}else{
 			fprintf(stderr,"Error al abrir el archivo %s\n",argv[4]);
 			return 1;
@@ -304,8 +305,8 @@ int main(int argc, char** argv){
 			escribir_pbm(nfilas, ncolumnas, matriz, argv[6], 0);
 			iterar_matriz(niterac, nfilas, ncolumnas, matriz, argv[6]);
   			free(matriz);
-  			return 0;
   			printf("Listo\n");
+  			return 0;
   		}else{
 			fprintf(stderr,"Error al abrir el archivo %s\n",argv[4]);
 			return 1;

@@ -1,0 +1,116 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definición del tipo de documento.                                           %
+% Posibles tipos de papel: a4paper, letterpaper, legalpapper                  %
+% Posibles tamaños de letra: 10pt, 11pt, 12pt                                 %
+% Posibles clases de documentos: article, report, book, slides                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,10pt]{article}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Los paquetes permiten ampliar las capacidades de LaTeX.                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Paquete para inclusión de gráficos.
+\usepackage{graphicx}
+%Packete para codigo
+\usepackage{listings}
+
+
+% Paquete para definir la codificación del conjunto de caracteres usado
+% (latin1 es ISO 8859-1).
+\usepackage[latin1]{inputenc}
+
+% Paquete para definir el idioma usado.
+\usepackage[spanish]{babel}
+
+
+% Título principal del documento.
+\title{		\textbf{Informe TP1}}
+
+% Información sobre los autores.
+\author{Ignacio Manes, \textit{Padrón Nro. 97.092}                     \\
+            \texttt{ nacho.maness@gmail.com }                                              \\
+            \texttt{ Pablo Israel} \textit{Padrón Nro. 95.849}                     \\
+            \texttt{ dirección de e-mail }											    \\[2.5ex]
+            \normalsize{Grupo Nro. 0 - 2do. Cuatrimestre de 2006}                       \\
+            \normalsize{66.20 Organización de Computadoras}                             \\
+            \normalsize{Facultad de Ingeniería, Universidad de Buenos Aires}            \\
+       }
+\date{}
+
+
+
+\begin{document}
+
+% Inserta el título.
+\maketitle
+
+% Quita el número en la primer página.
+\thispagestyle{empty}
+
+\newpage
+
+\section{Introducción}
+
+Este informe tratará sobre el trabajo práctico n°1 de la asignatura Organización de Computadoras,en el cuál desarrollaremos el juego de la vida de Conway. Para esta primer entrega, se ha desarrollado solo en c, por cuestiones de dificultad en el lenguaje, que nos impidieron avanzar con la sección de assembler.
+
+
+\section{Documentación relevante al diseño e implementación}
+
+Entre la documentación de relevancia podemos ver el makefile.
+En cuanto al diseño, se encapsulo en funciones para mayor legibilidad.
+Los problemas que se nos presentaron fueron el uso del pbm y el malloc, ya que ninguno de nosotros habiamos usado c antes, y mas que todo en el malloc tuvimos problemas con la aritmetica en el array de punteros.
+Se definio para el pbm un ancho y un alto de 50 pixeles por cuadrado de cada celda de la matriz.
+
+
+\section{Ejecuciones}
+	\subsection{Terminal}
+\begin{lstlisting}
+./conway 10 20 20 glider
+Leyendo estado inicial...
+Grabando glider_0.pbm
+Grabando glider_1.pbm
+Grabando glider_2.pbm
+Grabando glider_3.pbm
+Grabando glider_4.pbm
+Grabando glider_5.pbm
+Grabando glider_6.pbm
+Grabando glider_7.pbm
+Grabando glider_8.pbm
+Grabando glider_9.pbm
+Grabando glider_10.pbm
+Listo
+
+./conway 10 20 20 pento
+Leyendo estado inicial...
+Grabando pento_0.pbm
+Grabando pento_1.pbm
+Grabando pento_2.pbm
+Grabando pento_3.pbm
+Grabando pento_4.pbm
+Grabando pento_5.pbm
+Grabando pento_6.pbm
+Grabando pento_7.pbm
+Grabando pento_8.pbm
+Grabando pento_9.pbm
+Grabando pento_10.pbm
+Listo
+
+./conway 10 20 20 sapo
+Leyendo estado inicial...
+Grabando sapo_0.pbm
+Grabando sapo_1.pbm
+Grabando sapo_2.pbm
+Grabando sapo_3.pbm
+Grabando sapo_4.pbm
+Grabando sapo_5.pbm
+Grabando sapo_6.pbm
+Grabando sapo_7.pbm
+Grabando sapo_8.pbm
+Grabando sapo_9.pbm
+Grabando sapo_10.pbm
+Listo
+\end{lstlisting}
+Dichos pmb se encuentran adjuntados junto con el código fuente.
+\end{document}
