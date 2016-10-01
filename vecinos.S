@@ -1,293 +1,223 @@
 #include <mips/regdef.h>
 
 .text
-	.align 2
-	.globl vecinos
-	.ent vecinos
-	.ent 9a4
-	.ent 9b4
-	.ent 9dc
-	.ent 9ec
-	.ent a20
-	.ent a40
-	.ent a54
-	.ent aec
-	.ent b38
-	.ent b84
-	.ent bd0 
-	.ent c1c
-	.ent c68
-	.ent fin
+.align 2
+.globl vecinos
+.ent vecinos
 
 vecinos:
-    lui     gp,0x0
-    addiu   gp,gp,0
-    addu    gp,gp,t9
-    addiu   sp,sp,-40
-    sw      gp,0(sp)
-    sw      s8,36(sp)
-    sw      gp,32(sp)
-    move    s8,sp
-    sw      a0,40(s8) # *a
-    sw      a1,44(s8) # i
-    sw      a2,48(s8) # j
-    sw      a3,52(s8) # M
-    sw      zero,24(s8)
-    lw      v0,52(s8)
-    nop
-    addiu   v1,v0,-1
-    lw      v0,44(s8)
-    nop
-    
-    bne     v0,v1,9a4 
-    
-    nop
-    
-    b       9b4 
-    
-    sw      zero,8(s8)
-9a4:
-    lw      v0,44(s8)
-    nop
-    addiu   v0,v0,1
-    sw      v0,8(s8)
-9b4:
-	lw      v0,56(s8)
-    nop
-    addiu   v1,v0,-1
-    lw      v0,48(s8)
-    nop
-    sltu    v0,v0,v1
-    
-    bnez    v0,9dc
-    
-    nop
-    b       9ec
+	subu 	sp,sp,40
+	#sw 		fp,36(sp)
+	sw		gp,32(sp)
+	#move    fp,sp
+	sw      a0,40(sp) # *a
+    sw      a1,44(sp) # i
+    sw      a2,48(sp) # j
+    sw      a3,52(sp) # M
+    sw      s8,56(sp) # N
 
-    sw      zero,20(s8)
-9dc:
-    lw      v0,48(s8)
-    nop
-    addiu   v0,v0,1
-    sw      v0,20(s8)
-9ec:
-	lw      v0,44(s8)
-    nop
-    
-    bnez    v0,a10 
-    
-    nop
-    lw      v0,52(s8)
-    nop
-    addiu   v0,v0,-1
-    
-    b       a20
+    sw      zero,24(sp) # vivos = 0
 
-    sw      v0,12(s8)
-    lw      v0,44(s8)
-    nop
-    addiu   v0,v0,-1
-    sw      v0,12(s8)
-a20:
-    lw      v0,48(s8)
-    nop
-    
-    bnez    v0,a44
-    
-    nop
-    lw      v0,56(s8)
-    nop
-    addiu   v0,v0,-1
-    
-    b       a54
+    lw      v0,52(sp) # M
 
-a40:
-	sw      v0,16(s8)
-    lw      v0,48(s8)
-    nop
-    addiu   v0,v0,-1
-    sw      v0,16(s8)
-a54:
-    lw      v1,56(s8)
-    lw      v0,8(s8)
-    nop
+    addiu   v1,v0,-1 # M-1
+    lw      v0,44(sp) # i
+    
+    bne     v0,v1,contorno_ixd 
+
+    sw		zero,8(sp) # ixd = 0
+
+    b       contorno_ixd_else 
+contorno_ixd:
+    lw      v0,44(sp) #i
+    addiu   v0,v0,1 # i+1
+    sw      v0,8(sp) # ixd=i+1
+contorno_ixd_else:
+	lw      v0,56(sp) # N
+    addiu   v1,v0,-1 # N-1
+    lw      v0,48(sp) # j
+    
+    bne    v0,v1,contorno_iyi
+
+    sw      zero,20(sp) # iyi = 0
+
+    b       contorno_iyi_else
+
+contorno_iyi:
+    lw      v0,48(sp) # j
+    addiu   v0,v0,1 # j+1
+    sw      v0,20(sp) # iyi=j+1
+contorno_iyi_else:
+	lw      v0,44(sp)
+    
+    bnez    v0,contorno_iye 
+   
+    lw      v0,52(sp) # M
+    addiu   v0,v0,-1 # M-1
+    sw      v0,12(sp) # ixe=M-1;
+
+    b       contorno_iye_else
+
+contorno_iye:
+	lw      v0,44(sp) # i
+    addiu   v0,v0,-1 # i-1
+    sw      v0,12(sp) # ixe=i-1;
+contorno_iye_else:
+    lw      v0,48(sp)
+    
+    bnez    v0,contorno_iys
+    
+    lw      v0,56(sp) # N
+    addiu   v0,v0,-1 # N-1
+    sw      v0,16(sp) # iys=N-1
+
+    b       contorno_iys_else
+
+contorno_iys:
+	lw      v0,48(sp) # j
+    addiu   v0,v0,-1 # j-1
+    sw      v0,16(sp) # iys=j-1
+contorno_iys_else:
+    lw      v1,56(sp)
+    lw      v0,8(sp)
     mult    v1,v0
     mflo    v1
-	lw      v0,48(s8)
-    nop
+	lw      v0,48(sp)
    	addu    v1,v1,v0
-    lw      v0,40(s8)
-    nop
+    lw      v0,40(sp)
     addu    v0,v1,v0
     lbu     v1,0(v0)
     li      v0,88
 	
-	bne     v1,v0,aa0 
+caso1:
+	bne     v1,v0,caso2
     
-    nop
-    lw      v0,24(s8)
-    nop
+    lw      v0,24(sp)
     addiu   v0,v0,1
-    sw      v0,24(s8)
-aa0:
-    lw      v1,56(s8)
-    lw      v0,12(s8)
-    nop
+    sw      v0,24(sp)
+caso2:
+    lw      v1,56(sp)
+    lw      v0,12(sp)
     mult    v1,v0
     mflo    v1
-    lw      v0,48(s8)
-    nop
+    lw      v0,48(sp)
 	addu    v1,v1,v0
-    lw      v0,40(s8)
-    nop
+    lw      v0,40(sp)
     addu    v0,v1,v0
     lbu     v1,0(v0)
     li      v0,88
 
-	bne     v1,v0,aec <vecinos+0x1a0>
+	bne     v1,v0,caso3
 
-    nop
-    lw      v0,24(s8)
-    nop
+    lw      v0,24(sp)
     addiu   v0,v0,1
-    sw      v0,24(s8)
-aec:
-    lw      v1,56(s8)
-	lw      v0,44(s8)
-	nop
+    sw      v0,24(sp)
+caso3:
+    lw      v1,56(sp)
+	lw      v0,44(sp)
 	mult    v1,v0
 	mflo    v1
-	lw      v0,16(s8)
-	nop
+	lw      v0,16(sp)
 	addu    v1,v1,v0
-	lw      v0,40(s8)
-	nop
+	lw      v0,40(sp)
 	addu    v0,v1,v0
 	lbu     v1,0(v0)
 	li      v0,88
 
-	bne     v1,v0,b38 
+	bne     v1,v0,caso4
 
-	nop
-	lw      v0,24(s8)
-	nop
-	v0,v0,1
-	sw      v0,24(s8)
-b38:
-    lw      v1,56(s8)
-	lw      v0,44(s8)
-	nop
+	lw      v0,24(sp)
+	addiu	v0,v0,1
+	sw      v0,24(sp)
+caso4:
+    lw      v1,56(sp)
+	lw      v0,44(sp)
 	mult    v1,v0
 	mflo    v1
-	lw      v0,20(s8)
-	nop
+	lw      v0,20(sp)
 	addu    v1,v1,v0
-	lw      v0,40(s8)
-	nop
+	lw      v0,40(sp)
 	addu    v0,v1,v0
 	lbu     v1,0(v0)
 	li      v0,88
 
-	bne     v1,v0,b84
+	bne     v1,v0,caso5
 
-	nop
-	lw      v0,24(s8)
-	nop
+	lw      v0,24(sp)
 	addiu   v0,v0,1
-	sw      v0,24(s8)
-b84:
-    lw      v1,56(s8)
-	lw      v0,8(s8)
-	nop
+	sw      v0,24(sp)
+caso5:
+    lw      v1,56(sp)
+	lw      v0,8(sp)
 	mult    v1,v0
 	mflo    v1
-	lw      v0,16(s8)
-	nop
+	lw      v0,16(sp)
 	addu    v1,v1,v0
-	lw      v0,40(s8)
-	nop
+	lw      v0,40(sp)
 	addu    v0,v1,v0
 	lbu     v1,0(v0)
 	li      v0,88
 	
-	bne     v1,v0,bd0
+	bne     v1,v0,caso6
 
-	nop
-	lw      v0,24(s8)
-	nop
+	lw      v0,24(sp)
 	addiu   v0,v0,1
-	sw      v0,24(s8)
-bd0:
-    lw      v1,56(s8)
-	lw      v0,12(s8)
-	nop
+	sw      v0,24(sp)
+caso6:
+    lw      v1,56(sp)
+	lw      v0,12(sp)
 	mult    v1,v0
 	mflo    v1
-	lw      v0,16(s8)
-	nop
+	lw      v0,16(sp)
 	addu    v1,v1,v0
-	lw      v0,40(s8)
-	nop
+	lw      v0,40(sp)
 	addu    v0,v1,v0
 	lbu     v1,0(v0)
 	li      v0,88
 
-	bne     v1,v0,c1c
+	bne     v1,v0,caso7
 
-	nop
-	lw      v0,24(s8)
-	nop
+	lw      v0,24(sp)
 	addiu   v0,v0,1
-    sw      v0,24(s8)
-c1c:
-    lw      v1,8(s8)
-   	lw      v0,56(s8)
-	nop
+    sw      v0,24(sp)
+caso7:
+    lw      v1,8(sp)
+   	lw      v0,56(sp)
 	mult    v1,v0
 	mflo    v1
-	lw      v0,20(s8)
-	nop
+	lw      v0,20(sp)
 	addu    v1,v1,v0
-	lw      v0,40(s8)
-	nop
+	lw      v0,40(sp)
 	addu    v0,v1,v0
-	v1,0(v0)
+	lbu 	v1,0(v0)
 	li      v0,88
 
-	bne     v1,v0,c68
+	bne     v1,v0,caso8
 
-	nop
-	lw      v0,24(s8)
-	nop
+	lw      v0,24(sp)
 	addiu   v0,v0,1
-	sw      v0,24(s8)
-c68:       
-    lw      v1,12(s8)
-    lw      v0,56(s8)
-	nop
+	sw      v0,24(sp)
+caso8:       
+    lw      v1,12(sp)
+    lw      v0,56(sp)
 	mult    v1,v0
 	mflo    v1
-	lw      v0,20(s8)
-	nop
+	lw      v0,20(sp)
 	addu    v1,v1,v0
-	lw      v0,40(s8)
-	nop
+	lw      v0,40(sp)
 	addu    v0,v1,v0
 	lbu     v1,0(v0)
 	li      v0,88
 
 	bne     v1,v0,fin
 
-	nop
-	lw      v0,24(s8)
-	nop
-	addiu   v0,v0,1
-fin:	
-	sw      v0,24(s8)
-	lw      v0,24(s8)
-    move    sp,s8
-   	lw      s8,36(sp)
+	lw      v0,24(sp)
+	addiu   v0,v0,1	
+	sw      v0,24(sp)
+fin:
+	lw      v0,24(sp) #return vivos
+    move    sp,sp
+   	lw      sp,36(sp)
+   	addiu   sp,sp,40
 	jr      ra
-    addiu   sp,sp,40
-
-.end vecinos
+	.end vecinos
