@@ -78,24 +78,24 @@ contorno_iys:
     addiu   v0,v0,-1 # j-1
     sw      v0,16(sp) # iys=j-1
 contorno_iys_else:
-    lw      v1,56(sp)
-    lw      v0,8(sp)
-    mult    v1,v0
-    mflo    v1
-	lw      v0,48(sp)
-   	addu    v1,v1,v0
-    lw      v0,40(sp)
+    lw      v1,56(sp) # N
+    lw      v0,8(sp) # ixd
+    mult    v1,v0 # N*ixd 
+    mflo    v1 
+	lw      v0,48(sp) # j
+   	addu    v1,v1,v0  # N*ixd+j
+    lw      v0,40(sp) # a (la direcc a la que apunta el putnero)
     addu    v0,v1,v0
-    lbu     v1,0(v0)
-    li      v0,88
+    lbu     v1,0(v0) # *(a)
+    li      v0,88 # ascii 'X'
 	
 caso1:
-	bne     v1,v0,caso2
+	bne     v1,v0,caso2 # a[N*ixd+j]!='X')
     
-    lw      v0,24(sp)
-    addiu   v0,v0,1
+    lw      v0,24(sp) # vivos
+    addiu   v0,v0,1 # vivos++
     sw      v0,24(sp)
-caso2:
+caso2: #se repite el proceso para los demas casos
     lw      v1,56(sp)
     lw      v0,12(sp)
     mult    v1,v0
