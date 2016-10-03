@@ -1,13 +1,23 @@
-  # the compiler: gcc for C program, define as g++ for C++
-  CC = gcc
+CC = gcc
+CFLAGS = -c
+PROG = conway
+DEFAULT = generic
 
-  # compiler flags:
-  #  -g    adds debugging information to the executable file
-  #  -Wall turns on most, but not all, compiler warnings
-  CFLAGS  = -g -Wall
+c_vecinos: vecinos.c
+	$(CC) $(CFLAGS) vecinos.c
 
-  conway:	conway.c
-	$(CC) $(CFLAGS) -o conway conway.c
+asm_vecinos: vecinos.S
+	$(CC) $(CFLAGS) vecinos.S
 
-  clean: 
-	$(RM) conway
+conway: conway.c
+	$(CC) $(CFLAGS) conway.c
+
+mips: asm_vecinos conway
+	$(CC) vecinos.o conway.o -o $(PROG)
+
+generic: c_vecinos conway
+	$(CC) vecinos.o conway.o -o $(PROG)
+
+	
+clean:
+	rm -rf *.o $(PROG)
