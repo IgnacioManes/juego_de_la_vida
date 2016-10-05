@@ -124,6 +124,18 @@ int obtener_valor_numerico(unsigned int fil, unsigned int col, unsigned int ncol
     }
 }
 
+void mostrar_matriz(int nfil,int ncol, unsigned char* matriz){
+	int i = 0, j= 0 ;
+	for(;i<nfil;i++){
+		j = 0;
+		for(;j<ncol;j++){
+			printf("%c",matriz[i*ncol+j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
 void escribir_pbm(int nfil, int ncol, unsigned char* matriz, const char* nombre_arch, int iterac) {
     int width = PIXEL_WIDTH;
     int height = PIXEL_HEIGHT;
@@ -131,6 +143,7 @@ void escribir_pbm(int nfil, int ncol, unsigned char* matriz, const char* nombre_
     char buffer[30];
     snprintf(buffer,sizeof(buffer),"%s_%d.pbm", nombre_arch,iterac);
     printf("Grabando %s\n",buffer);
+    mostrar_matriz(nfil, ncol, matriz);
 
     FILE *bit_map = fopen(buffer ,"w");
     fprintf(bit_map, "%s\n", "P1"); // Header
@@ -150,17 +163,6 @@ void escribir_pbm(int nfil, int ncol, unsigned char* matriz, const char* nombre_
     fclose( bit_map );
 }
 
-void mostrar_matriz(int nfil,int ncol, unsigned char* matriz){
-	int i = 0, j= 0 ;
-	for(;i<nfil;i++){
-		j = 0;
-		for(;j<ncol;j++){
-			printf("%c",matriz[i*ncol+j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-}
 extern unsigned int vecinos(unsigned char *a, unsigned int i, unsigned int j,
 											unsigned int M, unsigned int N);
 
@@ -174,8 +176,6 @@ void iterar_matriz(int niterac, int nfil, int ncol, unsigned char* matriz, const
 	}
 	int i =0;
 	for(; i<niterac; i++){
-		//recorrido total para comprobar si ha llegado al limite de la tabla
-		//printf("Iteracion numero: %d \n",i+1);
 		for(ix=0; ix<nfil; ix++)
 		{
 			for(iy=0; iy<ncol; iy++)
@@ -196,7 +196,6 @@ void iterar_matriz(int niterac, int nfil, int ncol, unsigned char* matriz, const
 			matriz[ix*ncol+iy]=matriz_aux[ix][iy];
 		}
 	}
-	//mostrar_matriz(nfil, ncol, matriz);
 	escribir_pbm(nfil, ncol, matriz, nombre_arch, i+1);
 	}
 }
@@ -252,8 +251,6 @@ int main(int argc, char** argv){
 		unsigned char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
 		int estado = parsear_posiciones(argv[4], nfilas, ncolumnas, matriz);
 		if(estado==0){
-			//printf("Estado inicial\n");
-			//mostrar_matriz(nfilas, ncolumnas, matriz);
 			escribir_pbm(nfilas, ncolumnas, matriz, argv[4], 0);
 			iterar_matriz(niterac, nfilas, ncolumnas, matriz, argv[4]);
   			free(matriz);
@@ -270,8 +267,6 @@ int main(int argc, char** argv){
 		unsigned char* matriz = malloc(ncolumnas * nfilas * sizeof(char));
 		int estado = parsear_posiciones(argv[4], nfilas, ncolumnas, matriz);
 		if(estado==0){
-			printf("Estado inicial\n");
-			mostrar_matriz(nfilas, ncolumnas, matriz);
 			escribir_pbm(nfilas, ncolumnas, matriz, argv[6], 0);
 			iterar_matriz(niterac, nfilas, ncolumnas, matriz, argv[6]);
   			free(matriz);
