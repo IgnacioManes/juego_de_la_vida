@@ -200,6 +200,8 @@ void iterar_matriz(int niterac, int nfil, int ncol, unsigned char* matriz, const
 	}
 }
 
+extern void version();
+
 int main(int argc, char** argv){
 
 	/* si las columnas, filas e iteraciones se cargan de un archivo
@@ -238,7 +240,7 @@ int main(int argc, char** argv){
 			printf("-o Prefijo de los archivos de salida.\n");
 			return 0;
 		}else if(strcmp(argv[1],"-V")==0){
-			printf("version desarrollada en c\n");
+			version();
 			return 0;
 		}else{
 			fprintf(stderr, "Error de argumentos\n");
